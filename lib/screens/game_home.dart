@@ -200,7 +200,7 @@ class GameHomePageState extends State<GameHomePage> {
           children: [
             TextField(
               decoration: const InputDecoration(
-                hintText: 'Filtre por título, descrição ou fabricante',
+                hintText: 'Filtre por título, descrição ou publicador',
               ),
               onChanged: (value) {
                 setState(() {

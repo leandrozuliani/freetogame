@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/game.dart';
 import '../services/game_service.dart';
+import 'game_details.dart';
 
 class GameList extends StatefulWidget {
   final List<Game> games;
@@ -27,35 +28,49 @@ class GameListState extends State<GameList> {
       crossAxisSpacing: 16,
       shrinkWrap: true,
       children: widget.games.map((game) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 2,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 3,
-                child: _buildThumbnail(context, game),
-              ),
-              Expanded(
-                flex: screenWidth <= 500 ? 3 : 2,
-                child: _buildGameInfo(context, game),
-              ),
-            ],
+        return InkWell(
+          onTap: () {
+            _showGameDetails(context, game);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 2,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: _buildThumbnail(context, game),
+                ),
+                Expanded(
+                  flex: screenWidth <= 500 ? 3 : 2,
+                  child: _buildGameInfo(context, game),
+                ),
+              ],
+            ),
           ),
         );
       }).toList(),
     );
   }
+}
+
+void _showGameDetails(BuildContext context, Game game) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => GameDetails(game: game),
+    ),
+  );
 }
 
 Widget _buildThumbnail(BuildContext context, Game game) {
