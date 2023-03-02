@@ -154,18 +154,24 @@ class GameHomePageState extends State<GameHomePage> {
                 hint: Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: Center(
-                    child: Text(
-                      _isSortBySelected ? _selectedSortByValue : 'Padrão',
-                      style: Theme.of(context).textTheme.bodySmall,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        _isSortBySelected ? _selectedSortByValue : 'Padrão',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ),
                   ),
                 ),
                 items: _sortByOptions.map((option) {
                   return DropdownMenuItem<String>(
                     value: option,
-                    child: Text(
-                      option,
-                      style: Theme.of(context).textTheme.bodySmall,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 2.0),
+                      child: Text(
+                        option,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ),
                   );
                 }).toList(),
