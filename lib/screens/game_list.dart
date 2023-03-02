@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/game.dart';
+import '../models/game_details.dart';
 import '../services/game_service.dart';
-import 'game_details.dart';
+import 'game_details_screen.dart';
 
 class GameList extends StatefulWidget {
   final List<Game> games;
@@ -30,7 +31,15 @@ class GameListState extends State<GameList> {
       children: widget.games.map((game) {
         return InkWell(
           onTap: () {
-            _showGameDetails(context, game);
+            // _showGameDetails(context, game);
+            showDialog(
+              context: context,
+              builder: (_) => const Center(child: CircularProgressIndicator()),
+            );
+            GameService.fetchSpecificGame(game.id).then((detailedGame) {
+              Navigator.pop(context);
+              _showGameDetails(context, detailedGame);
+            });
           },
           child: Container(
             decoration: BoxDecoration(
@@ -64,11 +73,11 @@ class GameListState extends State<GameList> {
   }
 }
 
-void _showGameDetails(BuildContext context, Game game) {
+void _showGameDetails(BuildContext context, GameDetails detailedGame) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => GameDetails(game: game),
+      builder: (context) => GameDetailsScreen(game: detailedGame),
     ),
   );
 }
@@ -108,7 +117,8 @@ Widget _buildGameInfo(BuildContext context, Game game) {
           game.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.titleMedium,
+          style:
+              Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 18),
         ),
         const SizedBox(height: 8),
         Text(

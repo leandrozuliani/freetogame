@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'package:freetogame/models/game_details.dart';
 import 'package:http/http.dart' as http;
 import '../models/game.dart';
 
 class GameService {
   // https://www.freetogame.com/api/games - essa API requer registro que se torna a URL abaixo
   static const String _apiUrl =
-      //'https://free-to-play-games-database.p.rapidapi.com/api/filter?tag=3d.mmorpg.fantasy.pvp&platform=pc';
       'https://free-to-play-games-database.p.rapidapi.com/api/games';
 
   static Future<List<Game>> fetchGames() async {
@@ -18,6 +18,21 @@ class GameService {
     final jsonList = jsonDecode(await response.stream.bytesToString());
 
     return List<Game>.from(jsonList.map((game) => Game.fromJson(game)));
+  }
+
+  static Future<GameDetails> fetchSpecificGame(int id) async {
+    const String _specificGameUrl =
+        'https://free-to-play-games-database.p.rapidapi.com/api/game';
+
+    Map<String, String> headers = getHeaders();
+
+    final request = http.Request('GET', Uri.parse('$_specificGameUrl?id=$id'));
+    request.headers.addAll(headers);
+
+    final response = await request.send();
+    final jsonMap = jsonDecode(await response.stream.bytesToString());
+
+    return GameDetails.fromJson(jsonMap);
   }
 
   static Map<String, String> getHeaders() {
