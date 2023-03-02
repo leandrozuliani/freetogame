@@ -17,18 +17,10 @@ class GameHomePageState extends State<GameHomePage> {
   late List<Game> _sortedGames;
   late bool _isSortBySelected = false;
   late String _selectedSortByValue;
+  String _searchedText = '';
 
   final List<String> _sortByOptions = ['Título', 'Lançamento'];
-  final Map<String, bool> _genres = {
-    "MMORPG": true,
-    "Shooter": true,
-    "Strategy": true,
-    "Card Game": true,
-    "Sports": true,
-    "Social": true,
-    "MMO": true,
-    "MOBA": true,
-  };
+  final Map<String, bool> _genres = {};
   Map<String, bool> _selectedGenres = {};
 
   @override
@@ -58,20 +50,19 @@ class GameHomePageState extends State<GameHomePage> {
   }
 
   // realiza um filtro nos campos, filtra por genero e também trata a ordenação
-  void _onSearchTextChanged(String? value) {
+  void _onSearchTextChanged(String value) {
     // final value = _searchController.text.toLowerCase();
 
     setState(() {
-      if (value != null) {
-        _filteredGames = _games
-            .where((game) =>
-                game.title.toLowerCase().contains(value.toLowerCase()) ||
-                game.shortDescription
-                    .toLowerCase()
-                    .contains(value.toLowerCase()) ||
-                game.publisher.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      }
+      _filteredGames = _games
+          .where((game) =>
+              game.title.toLowerCase().contains(value.toLowerCase()) ||
+              game.shortDescription
+                  .toLowerCase()
+                  .contains(value.toLowerCase()) ||
+              game.publisher.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+
       _filteredGames = _filteredGames
           .where((game) => _selectedGenres[game.genre] == true)
           .toList();
@@ -85,10 +76,20 @@ class GameHomePageState extends State<GameHomePage> {
     _filteredGames = [];
 
     final games = await GameService.fetchGames();
+
+    Set<String> gendersService = games.map((game) => game.genre.trim()).toSet();
+    List<String> sortedGenders = gendersService.toList()..sort();
+    gendersService = Set<String>.from(sortedGenders);
+
+    for (var gender in gendersService) {
+      _genres[gender.toString()] = true;
+    }
+
     setState(() {
       _games = games;
       _filteredGames = games;
       _sortedGames = games;
+      _selectedGenres = Map.from(_genres);
     });
   }
 
@@ -96,22 +97,25 @@ class GameHomePageState extends State<GameHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de jogos'),
+        title: const Text('Jogos'),
         actions: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               DropdownButton<String>(
                 // value: _selectedGenres[_selectedGenres.keys.first],
-                hint: const Text(
-                  'Filtre por:',
-                  style: TextStyle(fontSize: 11),
+                hint: Text(
+                  'Gêneros: ${_selectedGenres.values.where((selected) => !selected).length} excluído(s)',
+                  style: const TextStyle(fontSize: 11),
                 ),
-                icon: const Icon(Icons.arrow_downward),
+                icon: const Icon(
+                  Icons.arrow_downward,
+                  size: 20,
+                ),
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedGenres[newValue!] = !_selectedGenres[newValue]!;
-                    _onSearchTextChanged(null);
+                    _onSearchTextChanged(_searchedText);
                   });
                 },
                 items: _genres.entries.map((entry) {
@@ -127,11 +131,17 @@ class GameHomePageState extends State<GameHomePage> {
                             setState(() {
                               _genres[genreName] = value!;
                               _selectedGenres[genreName] = value;
-                              _onSearchTextChanged(null);
+                              _onSearchTextChanged(_searchedText);
                             });
                           },
                         ),
-                        Text(genreName),
+                        SizedBox(
+                          height: 20,
+                          child: Text(
+                            genreName,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
                       ],
                     ),
                   );
@@ -188,7 +198,8 @@ class GameHomePageState extends State<GameHomePage> {
               ),
               onChanged: (value) {
                 setState(() {
-                  _onSearchTextChanged(value);
+                  _searchedText = value;
+                  _onSearchTextChanged(_searchedText);
                 });
               },
             ),
