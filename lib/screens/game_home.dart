@@ -19,12 +19,24 @@ class GameHomePageState extends State<GameHomePage> {
   late String _selectedSortByValue;
 
   final List<String> _sortByOptions = ['Título', 'Lançamento'];
+  final Map<String, bool> _genres = {
+    "MMORPG": true,
+    "Shooter": true,
+    "Strategy": true,
+    "Card Game": true,
+    "Sports": true,
+    "Social": true,
+    "MMO": true,
+    "MOBA": true,
+  };
+  Map<String, bool> _selectedGenres = {};
 
   @override
   void initState() {
     super.initState();
     _fetchGames();
     _selectedSortByValue = _sortByOptions[0];
+    _selectedGenres = Map.from(_genres);
   }
 
   /// Ordena a lista de jogos por data de lançamento, com os mais recentes primeiro.
@@ -45,17 +57,25 @@ class GameHomePageState extends State<GameHomePage> {
     });
   }
 
-  // realiza um filtro nos campos e também trata a ordenação
-  void _onSearchTextChanged(String value) {
+  // realiza um filtro nos campos, filtra por genero e também trata a ordenação
+  void _onSearchTextChanged(String? value) {
+    // final value = _searchController.text.toLowerCase();
+
     setState(() {
-      _filteredGames = _games
-          .where((game) =>
-              game.title.toLowerCase().contains(value.toLowerCase()) ||
-              game.shortDescription
-                  .toLowerCase()
-                  .contains(value.toLowerCase()) ||
-              game.publisher.toLowerCase().contains(value.toLowerCase()))
+      if (value != null) {
+        _filteredGames = _games
+            .where((game) =>
+                game.title.toLowerCase().contains(value.toLowerCase()) ||
+                game.shortDescription
+                    .toLowerCase()
+                    .contains(value.toLowerCase()) ||
+                game.publisher.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+      }
+      _filteredGames = _filteredGames
+          .where((game) => _selectedGenres[game.genre] == true)
           .toList();
+
       _sortedGames = List.from(_filteredGames);
     });
   }
@@ -81,6 +101,42 @@ class GameHomePageState extends State<GameHomePage> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              DropdownButton<String>(
+                // value: _selectedGenres[_selectedGenres.keys.first],
+                hint: const Text(
+                  'Filtre por:',
+                  style: TextStyle(fontSize: 11),
+                ),
+                icon: const Icon(Icons.arrow_downward),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedGenres[newValue!] = !_selectedGenres[newValue]!;
+                    _onSearchTextChanged(null);
+                  });
+                },
+                items: _genres.entries.map((entry) {
+                  final genreName = entry.key;
+                  return DropdownMenuItem<String>(
+                    value: genreName,
+                    key: UniqueKey(),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: _genres[genreName],
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _genres[genreName] = value!;
+                              _selectedGenres[genreName] = value;
+                              _onSearchTextChanged(null);
+                            });
+                          },
+                        ),
+                        Text(genreName),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
               Text('Ordernar por: ',
                   style: Theme.of(context).textTheme.bodySmall),
               DropdownButton<String>(

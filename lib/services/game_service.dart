@@ -5,7 +5,8 @@ import '../models/game.dart';
 class GameService {
   // https://www.freetogame.com/api/games - essa API requer registro que se torna a URL abaixo
   static const String _apiUrl =
-      'https://free-to-play-games-database.p.rapidapi.com/api/filter?tag=3d.mmorpg.fantasy.pvp&platform=pc';
+      //'https://free-to-play-games-database.p.rapidapi.com/api/filter?tag=3d.mmorpg.fantasy.pvp&platform=pc';
+      'https://free-to-play-games-database.p.rapidapi.com/api/games';
 
   static Future<List<Game>> fetchGames() async {
     Map<String, String> headers = getHeaders();
