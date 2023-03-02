@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/game.dart';
 
 class GameService {
+  // https://www.freetogame.com/api/games - essa API requer registro que se torna a URL abaixo
   static const String _apiUrl =
       'https://free-to-play-games-database.p.rapidapi.com/api/filter?tag=3d.mmorpg.fantasy.pvp&platform=pc';
 
@@ -28,8 +29,7 @@ class GameService {
   // retorna os header para a API de thumbnails dos jogos, que requerem tratamento de CORS
   static Map<String, String> imageHeaders() {
     return {
-      "X-RapidAPI-Key": "f05c31a25amshc81d8eb31d1b4b1p18a40ajsnb82160234b41",
       "Access-Control-Allow-Origin": "*",
-    };
+    }..addAll(getHeaders());
   }
 }

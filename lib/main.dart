@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:freetogame/screens/game_list.dart';
 
+import 'screens/game_home.dart';
 import 'themes/dark_game_theme.dart';
 
 void main() {
