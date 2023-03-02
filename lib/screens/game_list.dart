@@ -51,7 +51,7 @@ Widget _buildThumbnail(BuildContext context, Game game) {
       children: [
         Positioned.fill(
           child: Image.network(
-            game.thumbnail,
+            'https://cors-anywhere.herokuapp.com/${game.thumbnail}', //cors trick
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return Image.asset(
@@ -59,6 +59,7 @@ Widget _buildThumbnail(BuildContext context, Game game) {
                 fit: BoxFit.cover,
               );
             },
+            headers: GameService.imageHeaders(),
           ),
         ),
         Positioned(
@@ -165,6 +166,7 @@ class GameHomePageState extends State<GameHomePage> {
     });
   }
 
+  // realiza um filtro nos campos e também trata a ordenação
   void _onSearchTextChanged(String value) {
     setState(() {
       _filteredGames = _games
@@ -195,7 +197,7 @@ class GameHomePageState extends State<GameHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Game List'),
+        title: const Text('Lista de jogos'),
         actions: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,

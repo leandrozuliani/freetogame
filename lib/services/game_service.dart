@@ -24,4 +24,12 @@ class GameService {
       "X-RapidAPI-Host": "free-to-play-games-database.p.rapidapi.com",
     };
   }
+
+  // retorna os header para a API de thumbnails dos jogos, que requerem tratamento de CORS
+  static Map<String, String> imageHeaders() {
+    return {
+      "X-RapidAPI-Key": "f05c31a25amshc81d8eb31d1b4b1p18a40ajsnb82160234b41",
+      "Access-Control-Allow-Origin": "*",
+    };
+  }
 }
