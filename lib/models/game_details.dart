@@ -6,8 +6,8 @@ import 'system_requirements.dart';
 class GameDetails extends Game {
   final String status;
   final String description;
-  final SystemRequirements minimumSystemRequirements;
-  final List<Screenshot> screenshots;
+  final SystemRequirements? minimumSystemRequirements;
+  final List<Screenshot>? screenshots;
 
   GameDetails({
     required int id,
@@ -23,8 +23,8 @@ class GameDetails extends Game {
     required String freetogameProfileUrl,
     required this.status,
     required this.description,
-    required this.minimumSystemRequirements,
-    required this.screenshots,
+    this.minimumSystemRequirements,
+    this.screenshots,
   }) : super(
           id: id,
           title: title,
@@ -54,8 +54,9 @@ class GameDetails extends Game {
       freetogameProfileUrl: json['freetogame_profile_url'],
       status: json['status'],
       description: json['description'],
-      minimumSystemRequirements:
-          SystemRequirements.fromJson(json['minimum_system_requirements']),
+      minimumSystemRequirements: json['minimum_system_requirements'] == null
+          ? null
+          : SystemRequirements.fromJson(json['minimum_system_requirements']),
       screenshots: List<Screenshot>.from(json['screenshots']
           .map((screenshot) => Screenshot.fromJson(screenshot))),
     );

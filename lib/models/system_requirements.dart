@@ -1,16 +1,16 @@
 class SystemRequirements {
-  final String os;
-  final String processor;
-  final String memory;
-  final String graphics;
-  final String storage;
+  final String? os;
+  final String? processor;
+  final String? memory;
+  final String? graphics;
+  final String? storage;
 
   SystemRequirements({
-    required this.os,
-    required this.processor,
-    required this.memory,
-    required this.graphics,
-    required this.storage,
+    this.os,
+    this.processor,
+    this.memory,
+    this.graphics,
+    this.storage,
   });
 
   factory SystemRequirements.fromJson(Map<String, dynamic> json) {

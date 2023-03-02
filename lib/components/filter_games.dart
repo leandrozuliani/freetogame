@@ -40,6 +40,7 @@ class FilterGameState extends State<FilterGame> {
           fillColor: Theme.of(context).cardColor,
           border: const OutlineInputBorder(),
           hintText: 'Filtro',
+          suffixIcon: const Icon(Icons.search),
         ),
         onChanged: _onChangedSetState,
       ),
