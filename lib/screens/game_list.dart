@@ -4,65 +4,36 @@ import '../models/game.dart';
 import '../services/game_service.dart';
 
 class GameList extends StatefulWidget {
-  const GameList({super.key});
+  final List<Game> games;
+
+  const GameList({Key? key, required this.games}) : super(key: key);
 
   @override
   GameListState createState() => GameListState();
 }
 
 class GameListState extends State<GameList> {
-  List<Game> _games = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchGames();
-  }
-
-  Future<void> _fetchGames() async {
-    final games = await GameService.fetchGames();
-    setState(() {
-      _games = games;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Game>>(
-      future: GameService.fetchGames(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final games = snapshot.data!;
-          return Container(
-            constraints: BoxConstraints(maxWidth: 160),
-            child: ListView.builder(
-              itemCount: games.length,
-              itemBuilder: (context, index) {
-                final game = games[index];
-                return SizedBox(
-                  width: 160,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildThumbnail(context, game),
-                      const SizedBox(height: 8),
-                      _buildGameInfo(context, game),
-                    ],
-                  ),
-                );
-              },
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 160),
+      child: ListView.builder(
+        itemCount: widget.games.length,
+        itemBuilder: (context, index) {
+          final game = widget.games[index];
+          return SizedBox(
+            width: 160,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildThumbnail(context, game),
+                const SizedBox(height: 8),
+                _buildGameInfo(context, game),
+              ],
             ),
           );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: const Text('Ocorreu um erro ao listar os jogos.'),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
+        },
+      ),
     );
   }
 }
@@ -95,7 +66,7 @@ Widget _buildThumbnail(BuildContext context, Game game) {
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              game.genre,
+              game.publisher,
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -129,7 +100,7 @@ Widget _buildGameInfo(BuildContext context, Game game) {
           children: [
             Chip(
               label: Text(
-                game.releaseDate.year.toString(),
+                game.genre,
                 style: const TextStyle(fontSize: 12),
               ),
               backgroundColor: Colors.black54,
@@ -148,27 +119,63 @@ Widget _buildGameInfo(BuildContext context, Game game) {
   );
 }
 
-class GameHomePage extends StatelessWidget {
+class GameHomePage extends StatefulWidget {
+  const GameHomePage({Key? key}) : super(key: key);
+
+  @override
+  GameHomePageState createState() => GameHomePageState();
+}
+
+class GameHomePageState extends State<GameHomePage> {
+  late List<Game> _games;
+  late List<Game> _filteredGames;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchGames();
+  }
+
+  Future<void> _fetchGames() async {
+    _games = [];
+    _filteredGames = [];
+
+    final games = await GameService.fetchGames();
+    setState(() {
+      _games = games;
+      _filteredGames = games;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Game List'),
+        title: const Text('Lista de jogos'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: GameList(),
-                ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                hintText: 'Filtro',
               ),
-            ],
-          ),
+              onChanged: (value) {
+                setState(() {
+                  _filteredGames = _games
+                      .where((game) =>
+                          game.title.contains(value) ||
+                          game.shortDescription.contains(value) ||
+                          game.publisher.contains(value))
+                      .toList();
+                });
+              },
+            ),
+            Flexible(
+              child: GameList(games: _filteredGames),
+            ),
+          ],
         ),
       ),
     );

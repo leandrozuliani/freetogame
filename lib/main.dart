@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Free to Game',
+      title: 'Lista de Games',
       theme: gameTheme,
-      home: GameHomePage(),
+      home: const GameHomePage(),
     );
   }
 }
