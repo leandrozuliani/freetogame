@@ -14,7 +14,6 @@ class GameHomePage extends StatefulWidget {
 }
 
 class GameHomePageState extends State<GameHomePage> {
-  late List<Game> _filteredGames;
   late bool _isSortBySelected = false;
   bool _isLoading = false;
   bool _hasError = false;
@@ -22,7 +21,7 @@ class GameHomePageState extends State<GameHomePage> {
   String _searchedText = '';
 
   final List<String> _sortByOptions = ['Título', 'Lançamento'];
-  final Map<String, bool> _genres = {};
+  final Map<String, bool> _genresMap = {};
   Map<String, bool> _selectedGenres = {};
 
   @override
@@ -80,6 +79,7 @@ class GameHomePageState extends State<GameHomePage> {
 
     final sortedGames = List<Game>.from(filteredAndSelectedGenresGames);
 
+    /// TODO: Implementar ordenação reversa (a-z, z-a) `sortedGames.reversed`
     if (_selectedSortByValue == _sortByOptions[1]) {
       sortedGames.sort((a, b) => b.releaseDate.compareTo(a.releaseDate));
     } else if (_selectedSortByValue == _sortByOptions[0]) {
@@ -92,8 +92,6 @@ class GameHomePageState extends State<GameHomePage> {
   }
 
   Future<void> _fetchGames() async {
-    _filteredGames = [];
-
     final provider = getProvider(context);
 
     final games = await GameService.fetchGames();
@@ -102,19 +100,19 @@ class GameHomePageState extends State<GameHomePage> {
 
     provider.setGames(games);
 
-    Set<String> gendersService = games.map((game) => game.genre.trim()).toSet();
-    List<String> sortedGenders = gendersService.toList()..sort();
-    gendersService = Set<String>.from(sortedGenders);
+    Set<String> genresSet = games.map((game) => game.genre.trim()).toSet();
+    List<String> sortedGenders = genresSet.toList()..sort();
+    genresSet = Set<String>.from(sortedGenders);
 
-    for (var gender in gendersService) {
-      _genres[gender.toString()] = true;
+    for (var genreSet in genresSet) {
+      _genresMap[genreSet.toString()] = true;
     }
     // print(_genres);
     _selectedSortByValue = _sortByOptions[0];
-    _selectedGenres = Map.from(_genres);
+    _selectedGenres = Map.from(_genresMap);
 
     setState(() {
-      _selectedGenres = Map.from(_genres);
+      _selectedGenres = Map.from(_genresMap);
     });
   }
 
@@ -188,7 +186,7 @@ class GameHomePageState extends State<GameHomePage> {
                         // _onSearchTextChanged(_searchedText);
                       });
                     },
-                    items: _genres.entries.map((entry) {
+                    items: _genresMap.entries.map((entry) {
                       final genreName = entry.key;
                       return DropdownMenuItem<String>(
                         value: genreName,
@@ -197,10 +195,10 @@ class GameHomePageState extends State<GameHomePage> {
                           children: [
                             Checkbox(
                               key: UniqueKey(),
-                              value: _genres[genreName],
+                              value: _genresMap[genreName],
                               onChanged: (bool? value) {
                                 setState(() {
-                                  _genres[genreName] = value!;
+                                  _genresMap[genreName] = value!;
                                   _selectedGenres[genreName] = value;
                                   _onSearchTextChanged(_searchedText);
                                 });
@@ -304,7 +302,7 @@ class GameHomePageState extends State<GameHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Aguarde, carregando lista de jogos',
+            Text('Aguarde um momento, por favor...',
                 style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 16),
             const CircularProgressIndicator(),
@@ -355,7 +353,7 @@ class GameHomePageState extends State<GameHomePage> {
             ),
             const SizedBox(height: 16),
             const Text(
-              '1. Verifique sua conexão com a internet\n\n2. Verifique se a Api-key utilizada é válida.',
+              '1. Verifique sua conexão com a internet\n\n2. Verifique se a Api-Rapid-key utilizada é válida, leia o README do projeto para mais informações.',
               style: TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),

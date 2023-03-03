@@ -49,6 +49,6 @@ class GameService {
   // retorna os header para a API de thumbnails dos jogos, que requerem tratamento de CORS
   // foi utilizado o serviço publico https://proxy.cors.sh/ que requer registro
   static Map<String, String> imageHeaders() {
-    return {'x-cors-api-key': 'temp_4eb325f6d87a70ab2260ba054936fdf2'};
+    return {'x-cors-api-key': 'temp_543b6fc5efb095715c6c5b3c511bc8aa'};
   }
 }

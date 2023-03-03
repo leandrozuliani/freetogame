@@ -18,8 +18,8 @@ class GameListState extends State<GameList> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    double itemWidth = screenWidth > 640 ? 250.0 : 230.0;
-    final crossAxisCount = (screenWidth / itemWidth).floor();
+    double gridItemWidth = screenWidth > 640 ? 250.0 : 230.0;
+    final crossAxisCount = (screenWidth / gridItemWidth).floor();
 
     return GridView.count(
       crossAxisCount: crossAxisCount,

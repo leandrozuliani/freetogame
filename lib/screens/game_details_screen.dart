@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freetogame/components/details_system_requirements.dart';
 import 'package:freetogame/models/game_details.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../components/details_game_info.dart';
 import '../services/game_service.dart';
@@ -49,11 +50,11 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                   },
                   headers: GameService.imageHeaders(),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: _buttonPlayNow(context),
+                ),
               ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _buttonPlayNow(context),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -64,12 +65,17 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                widget.game.description,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.white60),
+              child: RichText(
+                textAlign: TextAlign.justify,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 10,
+                text: TextSpan(
+                  text: widget.game.description,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Colors.white60),
+                ),
               ),
             ),
             const Padding(
@@ -80,16 +86,25 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
               padding: const EdgeInsets.all(16.0),
               child: buildGameInfo(context, widget.game),
             ),
-            widget.game.screenshots != null
-                ? Screenshots(
-                    game: widget.game,
-                  )
-                : const Text('Nenhuma screenshot neste jogo'),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('Screenshots de ${widget.game.title}'),
+                ),
+                widget.game.screenshots != null
+                    ? Screenshots(
+                        game: widget.game,
+                      )
+                    : const Text('Nenhuma screenshot neste jogo'),
+              ],
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: widget.game.minimumSystemRequirements == null
                   ? const Center(
-                      child: Text('Não há informações do sistema'),
+                      child: Text('Não há informações do sistema operacional'),
                     )
                   : const Text('Requisitos mínimos do sistema'),
             ),
@@ -111,13 +126,25 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
       children: [
         ElevatedButton.icon(
           onPressed: () {},
+          icon: const Icon(
+            Icons.widgets_rounded,
+            size: 14,
+          ),
+          label: Text(widget.game.status),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey.shade900,
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            launchUrl(Uri.base.resolve(widget.game.gameUrl));
+          },
           icon: const Icon(Icons.play_arrow),
           label: const Text('JOGAR AGORA'),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.blue,
           ),
-        ),
-        const SizedBox(width: 12.0),
+        )
       ],
     );
   }
@@ -140,10 +167,6 @@ class Screenshots extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Text('Screenshots de ${game.title}'),
-            ),
             Row(
               children: [
                 ...List.generate(

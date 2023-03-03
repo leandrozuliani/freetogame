@@ -103,7 +103,7 @@ Widget buildGameInfo(BuildContext context, GameDetails game) {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
-                  launchUrl(Uri.https(game.freetogameProfileUrl));
+                  launchUrl(Uri.base.resolve(game.freetogameProfileUrl));
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.grey[300],
@@ -112,7 +112,15 @@ Widget buildGameInfo(BuildContext context, GameDetails game) {
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                 ),
-                child: const Text('Mais informações em FreeToGame'),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: Center(
+                    child: Text('Mais informações em FreeToGame',
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                  ),
+                ),
               ),
             ],
           ),
