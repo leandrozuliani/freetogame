@@ -67,7 +67,9 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: widget.game.minimumSystemRequirements == null
-                  ? const Center()
+                  ? const Center(
+                      child: Text('Não há informações do sistema'),
+                    )
                   : const Text('Requisios mínimos do sistema'),
             ),
             Padding(

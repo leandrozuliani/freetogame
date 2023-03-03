@@ -21,12 +21,12 @@ class GameService {
   }
 
   static Future<GameDetails> fetchSpecificGame(int id) async {
-    const String _specificGameUrl =
+    const String gameDetailUrl =
         'https://free-to-play-games-database.p.rapidapi.com/api/game';
 
     Map<String, String> headers = getHeaders();
 
-    final request = http.Request('GET', Uri.parse('$_specificGameUrl?id=$id'));
+    final request = http.Request('GET', Uri.parse('$gameDetailUrl?id=$id'));
     request.headers.addAll(headers);
 
     final response = await request.send();
