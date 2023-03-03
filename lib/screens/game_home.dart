@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../components/genres_dropdown.dart';
 import '../models/game.dart';
 import '../providers/game_list_provider.dart';
 import '../services/game_service.dart';
@@ -153,7 +154,17 @@ class GameHomePageState extends State<GameHomePage> {
                         child: SizedBox(width: 250, child: widgetSearchField()),
                       )
                     : const Center(),
-                widgetGenresList(context),
+                GenresDropdown(
+                  genresMap: _genresMap,
+                  selectedGenres: _selectedGenres,
+                  onGenreSelectionChanged: (genreName, value) {
+                    setState(() {
+                      _genresMap[genreName] = value;
+                      _selectedGenres[genreName] = value;
+                      _onSearchTextChanged(_searchedText);
+                    });
+                  },
+                ),
                 widgetSortingBy(context),
               ],
             ),
@@ -195,66 +206,6 @@ class GameHomePageState extends State<GameHomePage> {
           _onSearchTextChanged(_searchedText);
         });
       },
-    );
-  }
-
-  SizedBox widgetGenresList(BuildContext context) {
-    return SizedBox(
-      width: 160,
-      child: DropdownButton<String>(
-        hint: Padding(
-          padding: const EdgeInsets.only(left: 4.0),
-          child: Text(
-            _selectedGenres.values.where((selected) => !selected).isNotEmpty
-                ? 'Gênero: ${_selectedGenres.values.where((selected) => !selected).length} excluído(s)'
-                : 'Gênero: (todos)',
-            style: const TextStyle(fontSize: 11),
-          ),
-        ),
-        icon: const Padding(
-          padding: EdgeInsets.only(left: 16),
-          child: Icon(
-            Icons.arrow_downward,
-            size: 18,
-          ),
-        ),
-        onChanged: (String? newValue) {
-          setState(() {
-            // _selectedGenres[newValue!] =
-            //     !_selectedGenres[newValue]!;
-            // _onSearchTextChanged(_searchedText);
-          });
-        },
-        items: _genresMap.entries.map((entry) {
-          final genreName = entry.key;
-          return DropdownMenuItem<String>(
-            value: genreName,
-            key: UniqueKey(),
-            child: Row(
-              children: [
-                Checkbox(
-                  key: UniqueKey(),
-                  value: _genresMap[genreName],
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _genresMap[genreName] = value!;
-                      _selectedGenres[genreName] = value;
-                      _onSearchTextChanged(_searchedText);
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 20,
-                  child: Text(
-                    genreName,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
     );
   }
 
