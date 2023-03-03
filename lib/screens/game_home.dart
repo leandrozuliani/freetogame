@@ -133,7 +133,10 @@ class GameHomePageState extends State<GameHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Jogos'),
+        title: Text(
+          'Jogos Free-To-Play',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),

@@ -5,20 +5,15 @@ import '../models/game_details.dart';
 import '../services/game_service.dart';
 import 'game_details_screen.dart';
 
-class GameList extends StatefulWidget {
+class GameList extends StatelessWidget {
   final List<Game> games;
 
   const GameList({Key? key, required this.games}) : super(key: key);
 
   @override
-  GameListState createState() => GameListState();
-}
-
-class GameListState extends State<GameList> {
-  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    double gridItemWidth = screenWidth > 640 ? 250.0 : 230.0;
+    final gridItemWidth = screenWidth > 640 ? 250.0 : 230.0;
     final crossAxisCount = (screenWidth / gridItemWidth).floor();
 
     return GridView.count(
@@ -32,7 +27,7 @@ class GameListState extends State<GameList> {
       mainAxisSpacing: crossAxisCount == 1 ? 0 : 16,
       crossAxisSpacing: crossAxisCount == 1 ? 0 : 16,
       shrinkWrap: true,
-      children: widget.games.map((game) {
+      children: games.map((game) {
         return Padding(
           padding: EdgeInsets.only(bottom: crossAxisCount == 1 ? 16.0 : 0),
           child: InkWell(
