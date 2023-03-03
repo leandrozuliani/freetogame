@@ -147,13 +147,14 @@ class GameHomePageState extends State<GameHomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MediaQuery.of(context).size.width > 580
                   ? MainAxisAlignment.spaceBetween
-                  : MainAxisAlignment.end,
+                  : MainAxisAlignment.spaceBetween,
               children: [
-                MediaQuery.of(context).size.width > 580
-                    ? SingleChildScrollView(
-                        child: SizedBox(width: 250, child: widgetSearchField()),
-                      )
-                    : const Center(),
+                if (MediaQuery.of(context).size.width > 580)
+                  SingleChildScrollView(
+                    child: SizedBox(
+                        width: MediaQuery.of(context).size.width / 2.2,
+                        child: widgetSearchField()),
+                  ),
                 GenresDropdown(
                   genresMap: _genresMap,
                   selectedGenres: _selectedGenres,
@@ -209,21 +210,18 @@ class GameHomePageState extends State<GameHomePage> {
     );
   }
 
-  Row widgetSortingBy(BuildContext context) {
-    return Row(
-      children: [
-        DropdownButton<String>(
+  Widget widgetSortingBy(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width > 580 ? 125 : 180,
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          isExpanded: true,
           value: _isSortBySelected ? _selectedSortByValue : null,
           hint: Padding(
             padding: const EdgeInsets.only(right: 20),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  _isSortBySelected ? _selectedSortByValue : 'Ordenação',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
+            child: Text(
+              _isSortBySelected ? _selectedSortByValue : 'Ordenação',
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           icon: const Padding(
@@ -262,7 +260,7 @@ class GameHomePageState extends State<GameHomePage> {
             }
           },
         ),
-      ],
+      ),
     );
   }
 
