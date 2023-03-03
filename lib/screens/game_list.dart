@@ -17,14 +17,18 @@ class GameList extends StatefulWidget {
 class GameListState extends State<GameList> {
   @override
   Widget build(BuildContext context) {
-    const double itemWidth = 230.0;
     final screenWidth = MediaQuery.of(context).size.width;
+    double itemWidth = screenWidth > 640 ? 250.0 : 230.0;
     final crossAxisCount = (screenWidth / itemWidth).floor();
 
     return GridView.count(
       crossAxisCount: crossAxisCount,
       physics: const AlwaysScrollableScrollPhysics(),
-      childAspectRatio: 1.45,
+      childAspectRatio: crossAxisCount == 1
+          ? 1.45
+          : crossAxisCount == 2
+              ? 0.75
+              : 0.7,
       mainAxisSpacing: crossAxisCount == 1 ? 0 : 16,
       crossAxisSpacing: crossAxisCount == 1 ? 0 : 16,
       shrinkWrap: true,
@@ -49,7 +53,7 @@ class GameListState extends State<GameList> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
+                    color: Colors.blueGrey.shade600,
                     spreadRadius: 2,
                     blurRadius: 2,
                     offset: const Offset(0, 2),
@@ -102,7 +106,7 @@ Widget _buildThumbnail(BuildContext context, Game game) {
         errorBuilder: (context, error, stackTrace) {
           return Image.asset(
             'assets/images/nophoto.png',
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.cover,
           );
         },
         headers: GameService.imageHeaders(),

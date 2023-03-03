@@ -15,8 +15,9 @@ class GameHomePage extends StatefulWidget {
 
 class GameHomePageState extends State<GameHomePage> {
   late List<Game> _filteredGames;
-  late List<Game> _sortedGames;
   late bool _isSortBySelected = false;
+  bool _isLoading = false;
+  bool _hasError = false;
   late String _selectedSortByValue;
   String _searchedText = '';
 
@@ -27,7 +28,14 @@ class GameHomePageState extends State<GameHomePage> {
   @override
   void initState() {
     super.initState();
-    _fetchGames();
+    _isLoading = true;
+    _fetchGames()
+        .then((value) => setState(() {
+              _hasError = false;
+            }))
+        .catchError((error) => setState(() {
+              _hasError = true;
+            }));
   }
 
   /// Ordena a lista de jogos por data de lançamento, com os mais recentes primeiro.
@@ -90,6 +98,8 @@ class GameHomePageState extends State<GameHomePage> {
 
     final games = await GameService.fetchGames();
 
+    _isLoading = false;
+
     provider.setGames(games);
 
     Set<String> gendersService = games.map((game) => game.genre.trim()).toSet();
@@ -114,6 +124,14 @@ class GameHomePageState extends State<GameHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return scaffoldLoading(context);
+    }
+
+    if (_hasError) {
+      return scaffoldError();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Jogos'),
@@ -270,6 +288,81 @@ class GameHomePageState extends State<GameHomePage> {
                       games: gameListProvider.filteredAndSortedGames);
                 },
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Scaffold scaffoldLoading(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Jogos'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Aguarde, carregando lista de jogos',
+                style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: 16),
+            const CircularProgressIndicator(),
+            FutureBuilder(
+              future: Future.delayed(const Duration(seconds: 5)),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        await _fetchGames();
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      },
+                      child: const Text('Tentar novamente'),
+                    ),
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Scaffold scaffoldError() {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Jogos'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error, size: 48),
+            const SizedBox(height: 16),
+            const Text(
+              'Ocorreu um erro ao acessar os jogos',
+              style: TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              '1. Verifique sua conexão com a internet\n\n2. Verifique se a Api-key utilizada é válida.',
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _fetchGames,
+              child: const Text('Tentar novamente'),
             ),
           ],
         ),
