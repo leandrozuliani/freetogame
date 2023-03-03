@@ -119,7 +119,7 @@ class GameHomePageState extends State<GameHomePage> {
         title: const Text('Jogos'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children: [
             TextField(
@@ -143,10 +143,10 @@ class GameHomePageState extends State<GameHomePage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 SizedBox(
-                  width: 165,
+                  width: 160,
                   child: DropdownButton<String>(
                     hint: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
+                      padding: const EdgeInsets.only(left: 4.0),
                       child: Text(
                         _selectedGenres.values
                                 .where((selected) => !selected)
@@ -203,7 +203,7 @@ class GameHomePageState extends State<GameHomePage> {
                 ),
                 Row(
                   children: [
-                    Text('Ordernar por: ',
+                    Text('Ordernação:',
                         style: Theme.of(context).textTheme.bodySmall),
                     DropdownButton<String>(
                       value: _isSortBySelected ? _selectedSortByValue : null,

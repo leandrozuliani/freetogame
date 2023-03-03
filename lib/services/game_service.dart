@@ -35,6 +35,10 @@ class GameService {
     return GameDetails.fromJson(jsonMap);
   }
 
+  /// TODO: valor da Key não deve ficar guardado aqui
+  /// Flutter Web não suporta  Platform.environment`
+  /// final String appkey = Platform.environment['X-RapidAPI-Key'].toString();
+
   static Map<String, String> getHeaders() {
     return {
       "X-RapidAPI-Key": "f05c31a25amshc81d8eb31d1b4b1p18a40ajsnb82160234b41",
@@ -43,9 +47,8 @@ class GameService {
   }
 
   // retorna os header para a API de thumbnails dos jogos, que requerem tratamento de CORS
+  // foi utilizado o serviço publico https://proxy.cors.sh/ que requer registro
   static Map<String, String> imageHeaders() {
-    return {
-      "Access-Control-Allow-Origin": "*",
-    }..addAll(getHeaders());
+    return {'x-cors-api-key': 'temp_4eb325f6d87a70ab2260ba054936fdf2'};
   }
 }

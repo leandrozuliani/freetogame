@@ -17,54 +17,58 @@ class GameList extends StatefulWidget {
 class GameListState extends State<GameList> {
   @override
   Widget build(BuildContext context) {
-    const double itemWidth = 250.0;
+    const double itemWidth = 230.0;
     final screenWidth = MediaQuery.of(context).size.width;
     final crossAxisCount = (screenWidth / itemWidth).floor();
 
     return GridView.count(
       crossAxisCount: crossAxisCount,
       physics: const AlwaysScrollableScrollPhysics(),
-      childAspectRatio: 0.75,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
+      childAspectRatio: 1.45,
+      mainAxisSpacing: crossAxisCount == 1 ? 0 : 16,
+      crossAxisSpacing: crossAxisCount == 1 ? 0 : 16,
       shrinkWrap: true,
       children: widget.games.map((game) {
-        return InkWell(
-          onTap: () {
-            // _showGameDetails(context, game);
-            showDialog(
-              context: context,
-              builder: (_) => const Center(child: CircularProgressIndicator()),
-            );
-            GameService.fetchSpecificGame(game.id).then((detailedGame) {
-              Navigator.pop(context);
-              _showGameDetails(context, detailedGame);
-            });
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 2,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: _buildThumbnail(context, game),
-                ),
-                Expanded(
-                  flex: screenWidth <= 500 ? 3 : 2,
-                  child: _buildGameInfo(context, game),
-                ),
-              ],
+        return Padding(
+          padding: EdgeInsets.only(bottom: crossAxisCount == 1 ? 16.0 : 0),
+          child: InkWell(
+            onTap: () {
+              // _showGameDetails(context, game);
+              showDialog(
+                context: context,
+                builder: (_) =>
+                    const Center(child: CircularProgressIndicator()),
+              );
+              GameService.fetchSpecificGame(game.id).then((detailedGame) {
+                Navigator.pop(context);
+                _showGameDetails(context, detailedGame);
+              });
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 2,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: _buildThumbnail(context, game),
+                  ),
+                  Expanded(
+                    flex: screenWidth <= 480 ? 3 : 2,
+                    child: _buildGameInfo(context, game),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -92,12 +96,13 @@ Widget _buildThumbnail(BuildContext context, Game game) {
         topRight: Radius.circular(16),
       ),
       child: Image.network(
-        'https://cors-anywhere.herokuapp.com/${game.thumbnail}', //cors trick
+        //'https://cors-anywhere.herokuapp.com/${game.thumbnail}', //cors trick
+        'https://proxy.cors.sh/${game.thumbnail}', //cors trick
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Image.asset(
             'assets/images/nophoto.png',
-            fit: BoxFit.cover,
+            fit: BoxFit.fitHeight,
           );
         },
         headers: GameService.imageHeaders(),
