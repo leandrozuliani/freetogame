@@ -137,145 +137,24 @@ class GameHomePageState extends State<GameHomePage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              decoration: const InputDecoration(
-                hintText: 'Filtre por título, descrição ou publicador',
-                contentPadding: EdgeInsets.fromLTRB(16, 12, 16, 12),
-                prefixIcon: Icon(Icons.search),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchedText = value;
-                  _onSearchTextChanged(_searchedText);
-                });
-              },
-            ),
+            MediaQuery.of(context).size.width > 580
+                ? const Center()
+                : widgetSearchField(),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MediaQuery.of(context).size.width > 580
+                  ? MainAxisAlignment.spaceBetween
+                  : MainAxisAlignment.end,
               children: [
-                SizedBox(
-                  width: 160,
-                  child: DropdownButton<String>(
-                    hint: Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
-                      child: Text(
-                        _selectedGenres.values
-                                .where((selected) => !selected)
-                                .isNotEmpty
-                            ? 'Gênero: ${_selectedGenres.values.where((selected) => !selected).length} excluído(s)'
-                            : 'Gênero: (todos)',
-                        style: const TextStyle(fontSize: 11),
-                      ),
-                    ),
-                    icon: const Padding(
-                      padding: EdgeInsets.only(left: 16),
-                      child: Icon(
-                        Icons.arrow_downward,
-                        size: 18,
-                      ),
-                    ),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        // _selectedGenres[newValue!] =
-                        //     !_selectedGenres[newValue]!;
-                        // _onSearchTextChanged(_searchedText);
-                      });
-                    },
-                    items: _genresMap.entries.map((entry) {
-                      final genreName = entry.key;
-                      return DropdownMenuItem<String>(
-                        value: genreName,
-                        key: UniqueKey(),
-                        child: Row(
-                          children: [
-                            Checkbox(
-                              key: UniqueKey(),
-                              value: _genresMap[genreName],
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _genresMap[genreName] = value!;
-                                  _selectedGenres[genreName] = value;
-                                  _onSearchTextChanged(_searchedText);
-                                });
-                              },
-                            ),
-                            SizedBox(
-                              height: 20,
-                              child: Text(
-                                genreName,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Text('Ordernação:',
-                        style: Theme.of(context).textTheme.bodySmall),
-                    DropdownButton<String>(
-                      value: _isSortBySelected ? _selectedSortByValue : null,
-                      hint: Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(
-                              _isSortBySelected
-                                  ? _selectedSortByValue
-                                  : 'Padrão',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                        ),
-                      ),
-                      icon: const Padding(
-                        padding: EdgeInsets.only(left: 16),
-                        child: Icon(
-                          Icons.arrow_downward,
-                          size: 18,
-                        ),
-                      ),
-                      items: _sortByOptions.map((option) {
-                        return DropdownMenuItem<String>(
-                          value: option,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 2.0),
-                            child: Text(
-                              option,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            _selectedSortByValue = newValue;
-                            if (_selectedSortByValue == _sortByOptions[1]) {
-                              _sortGamesByReleaseDate();
-                            } else if (_selectedSortByValue ==
-                                _sortByOptions[0]) {
-                              _sortGamesByTitle();
-                            } else {
-                              final provider = getProvider(context);
-                              provider.setFilteredAndSortedGames(
-                                  provider.filteredAndSortedGames);
-                            }
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
+                MediaQuery.of(context).size.width > 580
+                    ? SingleChildScrollView(
+                        child: SizedBox(width: 250, child: widgetSearchField()),
+                      )
+                    : const Center(),
+                widgetGenresList(context),
+                widgetSortingBy(context),
               ],
             ),
             const SizedBox(height: 20),
@@ -290,6 +169,149 @@ class GameHomePageState extends State<GameHomePage> {
           ],
         ),
       ),
+    );
+  }
+
+  TextField widgetSearchField() {
+    return TextField(
+      decoration: const InputDecoration(
+        hintText: 'Filtre por título, descrição ou publicador',
+        hintStyle: TextStyle(
+          fontSize: 12,
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 8),
+        prefixIcon: Icon(
+          Icons.search,
+          size: 16,
+        ),
+        isCollapsed: true,
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.transparent),
+        ),
+      ),
+      onChanged: (value) {
+        setState(() {
+          _searchedText = value;
+          _onSearchTextChanged(_searchedText);
+        });
+      },
+    );
+  }
+
+  SizedBox widgetGenresList(BuildContext context) {
+    return SizedBox(
+      width: 160,
+      child: DropdownButton<String>(
+        hint: Padding(
+          padding: const EdgeInsets.only(left: 4.0),
+          child: Text(
+            _selectedGenres.values.where((selected) => !selected).isNotEmpty
+                ? 'Gênero: ${_selectedGenres.values.where((selected) => !selected).length} excluído(s)'
+                : 'Gênero: (todos)',
+            style: const TextStyle(fontSize: 11),
+          ),
+        ),
+        icon: const Padding(
+          padding: EdgeInsets.only(left: 16),
+          child: Icon(
+            Icons.arrow_downward,
+            size: 18,
+          ),
+        ),
+        onChanged: (String? newValue) {
+          setState(() {
+            // _selectedGenres[newValue!] =
+            //     !_selectedGenres[newValue]!;
+            // _onSearchTextChanged(_searchedText);
+          });
+        },
+        items: _genresMap.entries.map((entry) {
+          final genreName = entry.key;
+          return DropdownMenuItem<String>(
+            value: genreName,
+            key: UniqueKey(),
+            child: Row(
+              children: [
+                Checkbox(
+                  key: UniqueKey(),
+                  value: _genresMap[genreName],
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _genresMap[genreName] = value!;
+                      _selectedGenres[genreName] = value;
+                      _onSearchTextChanged(_searchedText);
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                  child: Text(
+                    genreName,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Row widgetSortingBy(BuildContext context) {
+    return Row(
+      children: [
+        DropdownButton<String>(
+          value: _isSortBySelected ? _selectedSortByValue : null,
+          hint: Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  _isSortBySelected ? _selectedSortByValue : 'Ordenação',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ),
+          ),
+          icon: const Padding(
+            padding: EdgeInsets.only(left: 16),
+            child: Icon(
+              Icons.arrow_downward,
+              size: 18,
+            ),
+          ),
+          items: _sortByOptions.map((option) {
+            return DropdownMenuItem<String>(
+              value: option,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 2.0),
+                child: Text(
+                  option,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              setState(() {
+                _selectedSortByValue = newValue;
+                if (_selectedSortByValue == _sortByOptions[1]) {
+                  _sortGamesByReleaseDate();
+                } else if (_selectedSortByValue == _sortByOptions[0]) {
+                  _sortGamesByTitle();
+                } else {
+                  final provider = getProvider(context);
+                  provider.setFilteredAndSortedGames(
+                      provider.filteredAndSortedGames);
+                }
+              });
+            }
+          },
+        ),
+      ],
     );
   }
 
