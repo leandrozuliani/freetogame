@@ -36,7 +36,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
               alignment: Alignment.bottomRight,
               children: [
                 Image.network(
-                  'https://proxy.cors.sh/${widget.game.thumbnail}',
+                  'http://localhost:3000/resource?url=${widget.game.thumbnail}',
                   height: 250,
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
@@ -48,7 +48,6 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                       ),
                     );
                   },
-                  headers: GameService.imageHeaders(),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -176,10 +175,9 @@ class Screenshots extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
                       child: Image.network(
-                        'https://proxy.cors.sh/${game.screenshots![index].image}',
+                        'http://localhost:3000/resource?url=${game.screenshots![index].image}',
                         fit: BoxFit.cover,
                         width: 200,
-                        headers: GameService.imageHeaders(),
                       ),
                     ),
                   ),

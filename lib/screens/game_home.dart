@@ -326,8 +326,12 @@ class GameHomePageState extends State<GameHomePage> {
               style: TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 16),
-            const Text(
-              '1. Verifique sua conexão com a internet\n\n2. Verifique se a Api-Rapid-key utilizada é válida, leia o README do projeto para mais informações.',
+            Text(
+              [
+                '1. Verifique sua conexão com a internet',
+                '2. Verifique se o servidor node express está funcionando corretamente',
+                '3. Leia o README do projeto para mais informações.'
+              ].join('\n'),
               style: TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),

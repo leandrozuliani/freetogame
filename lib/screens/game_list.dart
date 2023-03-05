@@ -41,6 +41,9 @@ class GameList extends StatelessWidget {
               GameService.fetchSpecificGame(game.id).then((detailedGame) {
                 Navigator.pop(context);
                 _showGameDetails(context, detailedGame);
+              }).catchError((onError) {
+                // ignore: todo
+                // TODO: tratamento de erro após chamar fetchSpecificGame
               });
             },
             child: Container(
@@ -95,8 +98,7 @@ Widget _buildThumbnail(BuildContext context, Game game) {
         topRight: Radius.circular(16),
       ),
       child: Image.network(
-        //'https://cors-anywhere.herokuapp.com/${game.thumbnail}', //cors trick
-        'https://proxy.cors.sh/${game.thumbnail}', //cors trick
+        'http://localhost:3000/resource?url=${game.thumbnail}',
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Image.asset(
@@ -104,7 +106,6 @@ Widget _buildThumbnail(BuildContext context, Game game) {
             fit: BoxFit.cover,
           );
         },
-        headers: GameService.imageHeaders(),
       ),
     ),
   );
