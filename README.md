@@ -12,16 +12,17 @@ Para subir esse projeto em ambiente local é necessário um servidor Node Expres
 Para isso é necessário rodar na raiz do projeto :
 1. `npm install request express` - dependencias para o servidor node usando os pacotes express e request.
 2. `node server/server.js --key=<API-KEY> --host=<API-HOST>` - aplicação vai ouvir as requisições do Flutter em http://localhost:3000/ 
+
 Obs: Para obter a sua chave, faça o cadastro em https://www.freetogame.com/api-doc
 
 ## Como rodar
 Para executar o projeto, siga os seguintes passos:
 
-#. Abra o projeto no Visual Studio Code ou em outro editor de sua preferência;
-#. Em um terminal separado execute `npm install express request`  
-    # E em seguida suba o servidor utilizando `node server/server.js`.
-#. Em outro terminal, execute o comando `flutter pub get` para instalar todas as dependências do Flutter.
-#. Finalmente, execute no terminal  `flutter run -d Chrome` ou apenas `flutter run` para iniciar o aplicativo emulator pré-instalado pelo Android Studio ou rodar diretamente no Chrome.
+1. Abra o projeto no Visual Studio Code ou em outro editor de sua preferência;
+2. Em um terminal separado execute `npm install express request`  
+     E em seguida suba o servidor utilizando `node server/server.js --key=<API-KEY> --host=<API-HOST>`.
+3. Em outro terminal, execute o comando `flutter pub get` para instalar todas as dependências do Flutter.
+4. Finalmente, execute no terminal  `flutter run -d Chrome` ou apenas `flutter run` para iniciar o aplicativo emulator pré-instalado pelo Android Studio ou rodar diretamente no Chrome.
 
 Obs: Neste projeto foram utilizadas as seguintes versões:
 * Dart SDK version: 2.19.2

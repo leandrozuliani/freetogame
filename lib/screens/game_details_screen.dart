@@ -36,7 +36,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
               alignment: Alignment.bottomRight,
               children: [
                 Image.network(
-                  'http://localhost:3000/resource?url=${widget.game.thumbnail}',
+                  '${GameService.baseUrl}${widget.game.thumbnail}',
                   height: 250,
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
@@ -175,7 +175,7 @@ class Screenshots extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
                       child: Image.network(
-                        'http://localhost:3000/resource?url=${game.screenshots![index].image}',
+                        '${GameService.baseUrl}${game.screenshots![index].image}',
                         fit: BoxFit.cover,
                         width: 200,
                       ),

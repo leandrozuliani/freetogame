@@ -5,10 +5,51 @@ import '../models/game_details.dart';
 import '../services/game_service.dart';
 import 'game_details_screen.dart';
 
-class GameList extends StatelessWidget {
+class GameList extends StatefulWidget {
   final List<Game> games;
 
   const GameList({Key? key, required this.games}) : super(key: key);
+
+  @override
+  State<GameList> createState() => _GameListState();
+}
+
+class _GameListState extends State<GameList> {
+  late List<Game> _pagedGames;
+
+  final int _itemsByPage = 20;
+  int _currentPage = 1;
+
+  void nextPage() {
+    final int nextPage = _currentPage + 1;
+    final int gamesCount = widget.games.length;
+
+    if ((nextPage - 1) * _itemsByPage < gamesCount) {
+      _currentPage = nextPage;
+      _pagedGames = widget.games.sublist(0, _currentPage * _itemsByPage);
+    } else {
+      resetPage();
+    }
+    setState(() {});
+  }
+
+  void resetPage() {
+    _currentPage = 1;
+    _pagedGames = widget.games.take(_itemsByPage).toList();
+  }
+
+  @override
+  void didUpdateWidget(GameList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // quando o filtro é ativo, estou voltando para a página 1 para não criar complexidade aqui
+    resetPage();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pagedGames = widget.games.take(_itemsByPage).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,65 +57,74 @@ class GameList extends StatelessWidget {
     final gridItemWidth = screenWidth > 640 ? 250.0 : 230.0;
     final crossAxisCount = (screenWidth / gridItemWidth).floor();
 
-    return GridView.count(
-      crossAxisCount: crossAxisCount,
-      physics: const AlwaysScrollableScrollPhysics(),
-      childAspectRatio: crossAxisCount == 1
-          ? 1.45
-          : crossAxisCount == 2
-              ? 0.75
-              : 0.7,
-      mainAxisSpacing: crossAxisCount == 1 ? 0 : 16,
-      crossAxisSpacing: crossAxisCount == 1 ? 0 : 16,
-      shrinkWrap: true,
-      children: games.map((game) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: crossAxisCount == 1 ? 16.0 : 0),
-          child: InkWell(
-            onTap: () {
-              // _showGameDetails(context, game);
-              showDialog(
-                context: context,
-                builder: (_) =>
-                    const Center(child: CircularProgressIndicator()),
-              );
-              GameService.fetchSpecificGame(game.id).then((detailedGame) {
-                Navigator.pop(context);
-                _showGameDetails(context, detailedGame);
-              }).catchError((onError) {
-                // ignore: todo
-                // TODO: tratamento de erro após chamar fetchSpecificGame
-              });
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.blueGrey.shade600,
-                    spreadRadius: 2,
-                    blurRadius: 2,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: _buildThumbnail(context, game),
-                  ),
-                  Expanded(
-                    flex: screenWidth <= 480 ? 3 : 2,
-                    child: _buildGameInfo(context, game),
-                  ),
-                ],
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (notification is ScrollEndNotification &&
+            notification.metrics.extentAfter == 0) {
+          nextPage();
+        }
+        return true;
+      },
+      child: GridView.count(
+        crossAxisCount: crossAxisCount,
+        physics: const AlwaysScrollableScrollPhysics(),
+        childAspectRatio: crossAxisCount == 1
+            ? 1.45
+            : crossAxisCount == 2
+                ? 0.75
+                : 0.7,
+        mainAxisSpacing: crossAxisCount == 1 ? 0 : 16,
+        crossAxisSpacing: crossAxisCount == 1 ? 0 : 16,
+        shrinkWrap: true,
+        children: _pagedGames.map((game) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: crossAxisCount == 1 ? 16.0 : 0),
+            child: InkWell(
+              onTap: () {
+                // _showGameDetails(context, game);
+                showDialog(
+                  context: context,
+                  builder: (_) =>
+                      const Center(child: CircularProgressIndicator()),
+                );
+                GameService.fetchSpecificGame(game.id).then((detailedGame) {
+                  Navigator.pop(context);
+                  _showGameDetails(context, detailedGame);
+                }).catchError((onError) {
+                  // ignore: todo
+                  // TODO: tratamento de erro após chamar fetchSpecificGame
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blueGrey.shade600,
+                      spreadRadius: 2,
+                      blurRadius: 2,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: _buildThumbnail(context, game),
+                    ),
+                    Expanded(
+                      flex: screenWidth <= 480 ? 3 : 2,
+                      child: _buildGameInfo(context, game),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 }
@@ -98,7 +148,7 @@ Widget _buildThumbnail(BuildContext context, Game game) {
         topRight: Radius.circular(16),
       ),
       child: Image.network(
-        'http://localhost:3000/resource?url=${game.thumbnail}',
+        '${GameService.baseUrl}${game.thumbnail}',
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Image.asset(

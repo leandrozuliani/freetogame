@@ -80,10 +80,9 @@ class GameHomePageState extends State<GameHomePage> {
 
     final sortedGames = List<Game>.from(filteredAndSelectedGenresGames);
 
-    /// TODO: Implementar ordenação reversa (a-z, z-a) `sortedGames.reversed`
-    if (_selectedSortByValue == _sortByOptions[1]) {
+    if (_selectedSortByValue == 'Lançamento') {
       sortedGames.sort((a, b) => b.releaseDate.compareTo(a.releaseDate));
-    } else if (_selectedSortByValue == _sortByOptions[0]) {
+    } else if (_selectedSortByValue == 'Título') {
       sortedGames.sort((a, b) => a.title.compareTo(b.title));
     }
 
@@ -108,8 +107,8 @@ class GameHomePageState extends State<GameHomePage> {
     for (var genreSet in genresSet) {
       _genresMap[genreSet.toString()] = true;
     }
-    // print(_genres);
-    _selectedSortByValue = _sortByOptions[0];
+
+    _selectedSortByValue = '';
     _selectedGenres = Map.from(_genresMap);
 
     setState(() {
