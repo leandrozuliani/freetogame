@@ -66,11 +66,12 @@ jobs:
       - name: Check for vulnerabilities with Dart
         run: dart pub outdated --mode=null-safety
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@v0.20.0
+      - name: Run Anchore vulnerability scanner
+        uses: anchore/scan-action@v2
         with:
-          image-ref: dart:stable
-          severity: CRITICAL,HIGH
+          image-reference: dart:stable
+          fail-build: true
+          acs-report-enable: true
 
   build:
     runs-on: ubuntu-latest
