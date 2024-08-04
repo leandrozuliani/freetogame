@@ -67,7 +67,7 @@ jobs:
         run: dart pub outdated --mode=null-safety
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@v0.24.0
+        uses: aquasecurity/trivy-action@v0.20.0
         with:
           image-ref: dart:stable
           severity: CRITICAL,HIGH
