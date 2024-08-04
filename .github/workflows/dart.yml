@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.13.0'
       - name: Install dependencies
         run: flutter pub get
       - name: Verify formatting
@@ -24,9 +25,10 @@ jobs:
     needs: format
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.13.0'
       - name: Install dependencies
         run: flutter pub get
       - name: Analyze project source
@@ -37,9 +39,10 @@ jobs:
     needs: analyze
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.13.0'
       - name: Install dependencies
         run: flutter pub get
       - name: Run tests
@@ -50,9 +53,10 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.13.0'
       - name: Install dependencies
         run: flutter pub get
 
@@ -73,9 +77,10 @@ jobs:
     needs: security
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.13.0'
       - name: Install dependencies
         run: flutter pub get
       - name: Build Flutter project
