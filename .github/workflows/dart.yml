@@ -81,10 +81,9 @@ jobs:
           FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.22.0-x64
           PUB_CACHE: /home/runner/.pub-cache
 
-      - name: Run Security DevOps Action
-        uses: advanced-security/security-devops-action@latest
-        with:
-          config-file: .github/security-devops-config.yml
+      - name: Run Microsoft Security DevOps
+        uses: microsoft/security-devops-action@latest
+        id: msdo
 
   build:
     runs-on: ubuntu-latest
