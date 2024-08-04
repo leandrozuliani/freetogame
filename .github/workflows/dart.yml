@@ -66,10 +66,22 @@ jobs:
       - name: Check for outdated dependencies with Dart
         run: dart pub outdated || true
 
+      - name: List dependencies
+        run: dart pub deps --style=compact
+
       - name: Scan current project
         uses: anchore/scan-action@v3
         with:
           path: "."
+          fail-build: true
+          output-format: table
+          severity-cutoff: medium
+          only-fixed: false
+          add-cpes-if-none: false
+          by-cve: false
+        env:
+          FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.13.0-x64
+          PUB_CACHE: /home/runner/.pub-cache
 
   build:
     runs-on: ubuntu-latest
