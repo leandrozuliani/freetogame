@@ -93,10 +93,10 @@ jobs:
         uses: actions/github-script@v4
         with:
           script: |
-            const { context, github } = require('@actions/github');
+            const github = require('@actions/github');
             const result = await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: github.context.repo.owner,
+              repo: github.context.repo.repo,
               title: 'Approval needed for release',
               body: 'Approval is needed to proceed with the release build. Please approve this issue to continue.',
             });
