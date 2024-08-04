@@ -331,7 +331,7 @@ class GameHomePageState extends State<GameHomePage> {
                 '2. Verifique se o servidor node express está funcionando corretamente',
                 '3. Leia o README do projeto para mais informações.'
               ].join('\n'),
-              style: TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
