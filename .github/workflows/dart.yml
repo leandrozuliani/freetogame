@@ -5,7 +5,7 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  workflow_dispatch:
+  workflow_dispatch: # Adiciona um gatilho manual para aprovação
 
 jobs:
   format:
@@ -81,10 +81,9 @@ jobs:
           FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.22.0-x64
           PUB_CACHE: /home/runner/.pub-cache
 
-      - name: Run Security DevOps Action
-        uses: advanced-security/security-devops-action@v1
-        with:
-          config-file: .github/security-devops-config.yml
+      - name: Run Microsoft Security DevOps
+        uses: microsoft/security-devops-action@latest
+        id: msdo
 
   approve-release:
     runs-on: ubuntu-latest
