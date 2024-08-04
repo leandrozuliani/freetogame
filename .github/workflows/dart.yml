@@ -87,20 +87,15 @@ jobs:
 
   chatgpt:
     runs-on: ubuntu-latest
-    needs: security
+    needs: [security]
     steps:
-      - uses: anc95/ChatGPT-CodeReview@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          LANGUAGE: English
-          OPENAI_API_ENDPOINT: https://api.openai.com/v1
-          MODEL: gpt-3.5-turbo # https://platform.openai.com/docs/models
-          PROMPT: Check if there are any confusions or irregularities in the following code diff and suggestion FIX... 
-          top_p: 1 # https://platform.openai.com/docs/api-reference/chat/create#chat/create-top_p
-          temperature: 1 # https://platform.openai.com/docs/api-reference/chat/create#chat/create-temperature
-          max_tokens: 10000
-          MAX_PATCH_LENGTH: 10000
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run ChatGPT Code Reviewer
+        uses: magnificode-ltd/chatgpt-code-reviewer@v0.0.8
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          fail-on-diff: false
         
   approve-release:
     runs-on: ubuntu-latest
