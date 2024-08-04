@@ -66,12 +66,10 @@ jobs:
       - name: Check for outdated dependencies with Dart
         run: dart pub outdated || true
 
-      - name: Run Anchore vulnerability scanner
-        uses: anchore/scan-action@v2
+      - name: Scan current project
+        uses: anchore/scan-action@v3
         with:
-          image-reference: dart:stable
-          fail-build: true
-          acs-report-enable: true
+          path: "."
 
   build:
     runs-on: ubuntu-latest
