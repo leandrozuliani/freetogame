@@ -2,9 +2,9 @@ name: Dart CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
   workflow_dispatch: # Adiciona um gatilho manual para aprovação
 
 jobs:
@@ -88,24 +88,16 @@ jobs:
   approve-release:
     runs-on: ubuntu-latest
     needs: security
+    environment:
+      name: dev
+      url: ${{ steps.msdo.outputs.url }}
     steps:
       - name: Request approval for release
-        uses: actions/github-script@v4
-        with:
-          script: |
-            const github = require('@actions/github');
-            const result = await github.rest.issues.create({
-              owner: github.context.repo.owner,
-              repo: github.context.repo.repo,
-              title: 'Approval needed for release',
-              body: 'Approval is needed to proceed with the release build. Please approve this issue to continue.',
-            });
-            console.log(result);
+        run: echo "Approval needed for release. Please approve the deployment in the 'dev' environment."
 
   build:
     runs-on: ubuntu-latest
     needs: approve-release
-    if: github.event.inputs.approval == 'true'
     steps:
       - uses: actions/checkout@v4
       - name: Set up Flutter
