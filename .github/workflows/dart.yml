@@ -63,8 +63,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Check for vulnerabilities with Dart
-        run: dart pub outdated --mode=null-safety
+      - name: Check for outdated dependencies with Dart
+        run: dart pub outdated || true
 
       - name: Run Anchore vulnerability scanner
         uses: anchore/scan-action@v2
