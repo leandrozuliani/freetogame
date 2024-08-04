@@ -85,19 +85,9 @@ jobs:
         uses: microsoft/security-devops-action@latest
         id: msdo
 
-  approve-release:
-    runs-on: ubuntu-latest
-    needs: security
-    environment:
-      name: dev
-      url: ${{ steps.msdo.outputs.url }}
-    steps:
-      - name: Request approval for release
-        run: echo "Approval needed for release. Please approve the deployment in the 'dev' environment."
-
   build-web:
     runs-on: ubuntu-latest
-    needs: approve-release
+    needs: [security]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Flutter
@@ -106,17 +96,33 @@ jobs:
           flutter-version: '3.22.0'
       - name: Install dependencies
         run: flutter pub get
-      - name: Build Flutter web project
+      - name: Build Flutter project for web
         run: flutter build web --release
-      - name: Upload Web Build
+      - name: Upload web build
         uses: actions/upload-artifact@v3
         with:
           name: web-release
           path: build/web
 
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+
+  approve-release:
+    runs-on: ubuntu-latest
+    needs: [security, build-web]
+    environment:
+      name: dev
+      url: ${{ steps.msdo.outputs.url }}
+    steps:
+      - name: Request approval for release
+        run: echo "Approval needed for release. Please approve the deployment in the 'dev' environment."
+
   build:
     runs-on: ubuntu-latest
-    needs: [approve-release, build-web]
+    needs: [approve-release]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Flutter
