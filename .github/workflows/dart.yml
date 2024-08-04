@@ -82,7 +82,7 @@ jobs:
           PUB_CACHE: /home/runner/.pub-cache
 
       - name: Run Security DevOps Action
-        uses: advanced-security/security-devops-action@v1
+        uses: advanced-security/security-devops-action@latest
         with:
           config-file: .github/security-devops-config.yml
 
