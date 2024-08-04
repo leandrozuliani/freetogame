@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Verify formatting
-        run: flutter format --output=none --set-exit-if-changed .
+        run: dart format --output=none --set-exit-if-changed .
 
   analyze:
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
         run: flutter pub get
 
       - name: Check for vulnerabilities with Dart
-        run: flutter pub outdated --mode=null-safety
+        run: dart pub outdated --mode=null-safety
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@v0.4.0
