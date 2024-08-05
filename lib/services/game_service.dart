@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import '../models/game.dart';
 
 class GameService {
-  static const String baseUrl = 'https://free-to-play-games-database.p.rapidapi.com';
+  static const String baseUrl =
+      'https://free-to-play-games-database.p.rapidapi.com';
 
   static Future<List<Game>> fetchGames() async {
     final request = http.Request('GET', Uri.parse('$baseUrl/api/games'));
