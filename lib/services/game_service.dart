@@ -4,14 +4,10 @@ import 'package:http/http.dart' as http;
 import '../models/game.dart';
 
 class GameService {
-  static const String baseUrl = 'http://localhost:3000/resource?url=';
-  static const String _gameUrl =
-      '${baseUrl}https://free-to-play-games-database.p.rapidapi.com';
-
-  static const String _apiUrl = '$_gameUrl/api/games';
+  static const String baseUrl = 'https://free-to-play-games-database.p.rapidapi.com';
 
   static Future<List<Game>> fetchGames() async {
-    final request = http.Request('GET', Uri.parse(_apiUrl));
+    final request = http.Request('GET', Uri.parse('$baseUrl/api/games'));
 
     final response = await request.send();
     final jsonList = jsonDecode(await response.stream.bytesToString());
@@ -20,7 +16,7 @@ class GameService {
   }
 
   static Future<GameDetails> fetchSpecificGame(int id) async {
-    String gameDetailUrl = '$_gameUrl/api/game?id=$id';
+    String gameDetailUrl = '$baseUrl/api/game?id=$id';
 
     final request = http.Request('GET', Uri.parse(gameDetailUrl));
 
