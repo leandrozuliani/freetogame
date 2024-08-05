@@ -124,7 +124,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Build Flutter web project
-        run: flutter build web --release
+        run: flutter build web --release --base-href "/freetogame/"
       - name: Upload Web
         uses: actions/upload-artifact@v3
         with:
