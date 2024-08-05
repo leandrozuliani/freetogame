@@ -1,3 +1,5 @@
+[![Dart CI](https://github.com/leandrozuliani/freetogame/actions/workflows/dart.yml/badge.svg)](https://github.com/leandrozuliani/freetogame/actions/workflows/dart.yml)
+
 # freetogame
 
 Free-to-game é uma API que permite ao usuário visualizar os jogos gratuitos disponíveis para jogar online. 
