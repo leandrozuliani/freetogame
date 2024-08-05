@@ -137,6 +137,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Download Web Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: web-release
+          path: build/web
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
