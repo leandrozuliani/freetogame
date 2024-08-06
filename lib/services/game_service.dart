@@ -9,7 +9,8 @@ class GameService {
 
   static const Map<String, String> headers = {
     'x-rapidapi-host': 'free-to-play-games-database.p.rapidapi.com',
-    'x-rapidapi-key': String.fromEnvironment('X_RAPIDAPI_KEY', defaultValue: ''),
+    'x-rapidapi-key':
+        String.fromEnvironment('X_RAPIDAPI_KEY', defaultValue: ''),
   };
 
   static Future<List<Game>> fetchGames() async {
