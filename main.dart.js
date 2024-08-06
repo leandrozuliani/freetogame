@@ -84939,7 +84939,7 @@ $S:502}
 A.agH.prototype={
 $2(a,b){var s,r=null
 if(b.a===B.mk)return B.lU
-else if(b.c!=null)return A.at7("assets/images/nophoto.png",B.im)
+else if(b.c!=null||b.b==null)return A.at7("assets/images/nophoto.png",B.im)
 else{s=b.b
 s.toString
 return new A.o8(A.ap1(r,r,new A.m9(s,1)),r,r,r,B.im,r)}},
