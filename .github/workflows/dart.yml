@@ -124,7 +124,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Build Flutter web project
-        run: flutter build web --release --base-href "/freetogame/"
+        run: flutter build web --release --base-href "/freetogame/" --dart-define=X_RAPIDAPI_KEY=${{ secrets.X_RAPIDAPI_KEY }}
       - name: Upload Web
         uses: actions/upload-artifact@v3
         with:
