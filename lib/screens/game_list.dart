@@ -148,7 +148,7 @@ Widget _buildThumbnail(BuildContext context, Game game) {
         topRight: Radius.circular(16),
       ),
       child: Image.network(
-        '${GameService.baseUrl}${game.thumbnail}',
+        game.thumbnail,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Image.asset(
