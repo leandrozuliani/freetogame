@@ -1,4 +1,6 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/game.dart';
 import '../models/game_details.dart';
@@ -127,38 +129,52 @@ class _GameListState extends State<GameList> {
       ),
     );
   }
-}
 
-void _showGameDetails(BuildContext context, GameDetails detailedGame) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => GameDetailsScreen(game: detailedGame),
-    ),
-  );
-}
-
-Widget _buildThumbnail(BuildContext context, Game game) {
-  return SizedBox(
-    width: double.infinity,
-    height: double.infinity,
-    child: ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(16),
-        topRight: Radius.circular(16),
+  void _showGameDetails(BuildContext context, GameDetails detailedGame) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameDetailsScreen(game: detailedGame),
       ),
-      child: Image.network(
-        game.thumbnail,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
+    );
+  }
+
+  Widget _buildThumbnail(BuildContext context, Game game) {
+    return FutureBuilder<Uint8List>(
+      future: fetchImageBytes(game.thumbnail),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
           return Image.asset(
             'assets/images/nophoto.png',
             fit: BoxFit.cover,
           );
-        },
-      ),
-    ),
-  );
+        } else {
+          return Image.memory(
+            snapshot.data!,
+            fit: BoxFit.cover,
+          );
+        }
+      },
+    );
+  }
+
+  Future<Uint8List> fetchImageBytes(String imageUrl) async {
+    final response = await http.get(
+      Uri.parse(imageUrl),
+      headers: const {
+        'x-rapidapi-host': 'free-to-play-games-database.p.rapidapi.com',
+        'x-rapidapi-key': String.fromEnvironment('X_RAPIDAPI_KEY', defaultValue: ''),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception('Failed loading image ${response.statusCode}');
+    }
+  }
 }
 
 Widget _buildGameInfo(BuildContext context, Game game) {
