@@ -145,7 +145,7 @@ class _GameListState extends State<GameList> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
+        } else if (snapshot.hasError || !snapshot.hasData) {
           return Image.asset(
             'assets/images/nophoto.png',
             fit: BoxFit.cover,
